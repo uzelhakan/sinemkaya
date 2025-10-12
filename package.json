@@ -1,0 +1,38 @@
+{
+  "name": "sinemkaya",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@edgestore/react": "^0.5.3",
+    "@edgestore/server": "^0.5.3",
+    "@thednp/dommatrix": "^2.0.6",
+    "@tinymce/tinymce-react": "^6.3.0",
+    "bootstrap-touchspin": "^4.7.3",
+    "firebase": "^11.7.1",
+    "firebase-admin": "^13.4.0",
+    "isotope-layout": "^3.0.6",
+    "lightgallery": "^2.7.2",
+    "multer": "^2.0.2",
+    "next": "^14.2.13",
+    "react": "^18",
+    "react-countup": "^6.5.3",
+    "react-curved-text": "^3.0.1",
+    "react-dom": "^18",
+    "react-modal-video": "^2.0.2",
+    "react-router-dom": "^7.6.1",
+    "swiper": "^11.2.6",
+    "wowjs": "^1.1.3",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/multer": "^2.0.0",
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}

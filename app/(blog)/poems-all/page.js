@@ -1,0 +1,168 @@
+'use client';
+
+import Layout from "@/components/layout/Layout";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { database } from "@/lib/firebase";
+
+export default function Home() {
+  const [blogData, setBlog] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+const postsPerPage = 21;
+
+const indexOfLastPost = currentPage * postsPerPage;
+const indexOfFirstPost = indexOfLastPost - postsPerPage;
+const currentPosts = blogData.slice(indexOfFirstPost, indexOfLastPost);
+
+const totalPages = Math.ceil(blogData.length / postsPerPage);
+
+const handleNextPage = () => {
+  if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+};
+
+const handlePrevPage = () => {
+  if (currentPage > 1) setCurrentPage(prev => prev - 1);
+};
+  
+  useEffect(() => {
+    const q = collection(database, "sinemkaya");
+  
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.docs.forEach(doc => {
+        const postItems = doc.data().post || [];
+        const userItems = doc.data().user || [];
+  
+        const userMap = {};
+        userItems.forEach(user => {
+          userMap[user.id] = user.full_name;
+        });
+  
+        const filteredBlog = postItems
+          .filter(item => item.isActive === "1" & item.category_id === "2" )
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map(post => ({
+            ...post,
+            userName: userMap[post.user_id] || "Sinem Kaya"
+          }));
+  
+        setBlog(filteredBlog);
+      });
+    });
+  
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <>
+      <Layout headerStyle={0} footerStyle={2} breadcrumbTitle="Poem">
+        <div>
+          {/* Blog Page Start */}
+          <section className="blog-page">
+            <div className="section-title__tagline-box"
+            style={{display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center", marginBottom: "77px",}}
+            >
+              <span className="section-title__tagline">Tüm Şiirlerim</span>
+            </div>
+            <div className="container">
+              <div className="row">
+                {currentPosts.map((poem, index) => (
+                  <div
+                    key={poem.id}
+                    className={`col-xl-4 col-lg-4 col-md-6 wow fadeIn${
+                      index % 3 === 0
+                        ? "Left"
+                        : index % 3 === 1
+                        ? "Up"
+                        : "Right"
+                    }`}
+                    data-wow-delay={`${(index + 1) * 100}ms`}
+                  >
+                    <div
+                key={poem.id}
+                className={`col-12 wow fadeInLeft`}
+                data-wow-delay="300ms"
+              >
+                <div className="poems__single">
+                  <div className="poems__content">
+                    <ul className="blog-one__meta list-unstyled blog-card-date">
+                      <li>
+                        <span className="icon-user"> </span> By {poem?.userName || ""}
+                      </li>
+                      <li className=''>
+                        <span className="icon-calendar"> </span> {new Date(poem?.createdAt || "").toLocaleDateString()}
+                      </li>
+                    </ul>
+                    <p className="poems__description">
+                      <Link href={`/poems/${poem?.id || ""}` || '#'}>
+                        {poem.description.length > 0
+                          ? poem.description.substring(300, poem?.description.lastIndexOf("  ", 0)) + "..."
+                          : poem.description}
+                      </Link>
+                    </p>
+                    <div className="blog-one__btn-box-tw o d-none">
+                      <Link href={poem?.id || ""} className="blog-one__btn thm-btn">
+                        Tamamını Oku<span className="icon-arrow-right"></span>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+          {/* Blog Page End */}
+          {/* Pagination Start */}
+          <div className="pagination-container text-center mt-4 mb-5">
+            <button
+              className="thm-btn me-2"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              Önceki
+            </button>
+            <span>Sayfa {currentPage} / {totalPages}</span>
+            <button
+              className="thm-btn ms-2"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Sonraki
+            </button>
+          </div>
+          {/* Pagination End */}
+          {/* CTA One Start */}
+          <section className="cta-one">
+            <div className="container">
+              <div className="cta-one__inner">
+                              <h3 className="cta-one__title">
+                Instagramdan takip ederek <br /> etkinliklerden haberdar olun.
+              </h3>
+              <form
+                className="cta-one__form mc-form"
+                data-url="MC_FORM_URL"
+                noValidate
+              >
+                <div className="cta-one__form-input-box">
+                  <input
+                    type="email"
+                    placeholder="@linasinem"
+                    name="EMAIL"
+                    readOnly
+                  />
+                  <Link className="cta-one__btn" href="https://www.instagram.com/linasinem/" target="_blank" rel="noopener noreferrer">
+                    <span className="icon-instagram"></span>
+                  </Link>
+                </div>
+              </form>
+              </div>
+            </div>
+          </section>
+          {/* CTA One End */}
+        </div>
+      </Layout>
+    </>
+  );
+}
