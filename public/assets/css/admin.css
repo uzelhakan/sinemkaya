@@ -141,13 +141,16 @@ button:hover {
 }
 
 .admin-table th{
-    border: 1px solid #ccc;
-    padding: 6px 1px;
+    border: 0px solid #ccc;
+    padding: 0px 1px;
+    margin: 0 auto;
     text-align: center;
     color: #000000;
+    line-height: 5px;
 }
 .admin-table td {
-  border: 1px solid #ccc;
+  border: 0px solid #ccc;
+  border-bottom: 1px solid #999;
   padding: 1px;
   text-align: center;
   color: #ccc;
@@ -227,6 +230,30 @@ button:hover {
   color: #d93025;
   font-weight: 600;
 }
+.__panel_fixed{
+  margin-bottom: 10px !important;
+  padding-bottom: 20px !important;
+  row-gap: 20px;
+}
+.__panel_post_th{
+  width: auto;
+  height: 30px !important;
+  padding: 1px;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+  margin-bottom: 10px !important;
+}
+.admin-table th.__panel_post_th{
+    border: 0px solid #cccccc00;
+    padding: 1px;
+    text-align: center;
+    color: #000000;
+    justify-content: space-around;
+      border-radius: 10px;
+    margin-bottom: 20px;
+}
 
 .__panel_post_btn{
   width: 100px;
@@ -258,6 +285,8 @@ button:hover {
 }
 .__panel__add__container{
   position: relative;
+  overflow: hidden;
+  color: #000;
 
 }
 .__panel__add__post{
@@ -265,6 +294,7 @@ button:hover {
   width: 100%;
   min-width: 700px;
   max-width: 100%;
+  padding: 10px;
 }
 .__panel__container{
   width: 100%;
@@ -272,4 +302,34 @@ button:hover {
   overflow: scroll;
   scroll-behavior: smooth;
   scrollbar-width: none;
+}
+
+.__add-grid-container {
+  position: relative;
+  display: grid;
+  grid-template-columns: 33% 66%;
+  gap: 1%;
+}
+
+.__add-grid-left {
+  background: #f0f0f0;
+  display: flex;
+  min-height: 100px;
+  max-height: 200px;
+  justify-content: center;
+  align-items: center;
+}
+
+.__add-grid-right {
+  background: #ddd;
+  padding-right: 20px;
+  min-height: 100px;
+  max-height: 200px;
+}
+
+/* Küçük ekranlarda alt alta gelsin */
+@media (max-width: 768px) {
+  .__add-grid-container {
+    grid-template-columns: 1fr;
+  }
 }

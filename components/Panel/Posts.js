@@ -101,19 +101,19 @@ export default function Posts() {
         <>
           <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr>
-                <th>ID</th>
-                <th>Cat</th>
-                <th>Başlık</th>
-                <th>Tarih</th>
+              <tr className='__panel_fixed'>
+                <th className='__panel_post_th'>ID</th>
+                <th className='__panel_post_th'>Cat</th>
+                <th className='__panel_post_th'>Başlık</th>
+                <th className='__panel_post_th'>Tarih</th>
                 <th hidden>Video URL</th>
-                <th>Resim</th>
+                <th className='__panel_post_th'>Resim</th>
                 <th hidden>User</th>
-                <th>Gösterim</th>
-                <th>Aktif</th>
+                <th className='__panel_post_th'>Gösterim</th>
+                <th className='__panel_post_th'>Aktif</th>
                 <th hidden>Uzunluk</th>
                 <th hidden>Post Tipi</th>
-                <th className='__panel_post_btn'>İşlem</th>
+                <th className='__panel_post_th'>İşlem</th>
               </tr>
             </thead>
             <tbody>

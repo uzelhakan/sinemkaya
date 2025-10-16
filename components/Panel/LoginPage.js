@@ -11,11 +11,8 @@ export default function LoginPage({ onLogin }) {
       setError('');
       onLogin();
     } else {
-      setError('Hatalı Şifre Girişi');
-      setTimeout(() => {
-      window.location.reload();
-    }, 1000); // 1 saniye bekleyip sayfayı yeniler
-  }
+      setError('Hatalı şifre');
+    }
   };
 
   return (
@@ -26,6 +23,8 @@ export default function LoginPage({ onLogin }) {
         placeholder="Şifre"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleLogin()} // Enter tuşu
+        autoComplete="current-password"
       />
       <button onClick={handleLogin}>Giriş Yap</button>
       {error && <p className="error-message">{error}</p>}

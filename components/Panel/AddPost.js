@@ -72,8 +72,65 @@ export default function AddPostForm({ onPostAdded }) {
   return (
     <div className='__panel__add__container'>
       <div className='__panel__add__post' style={{ marginBottom: '2rem', width: '100%' }}>
-        <h3>Yeni Yazı Ekle</h3>
+        <h3
+        style={{color: 'black', width: '100%', textAlign: 'center', fontWeight: 'bolder', marginTop: '50px'}}
+        >Yeni Yazı Ekle</h3>
+        {/* Kategori, yazar, tip vs. */}
+        <div style={{display: 'flex', justifyContent: 'space-around', padding: '20px'}}>
+          <div className='d-flex flex-column'>
+            <h5 className='text-black' style={{color: 'black'}}>Kategori</h5>
+            <select
+              value={newPost.category_id}
+              onChange={(e) => setNewPost({ ...newPost, category_id: e.target.value })}
+            >
+              <option value="1">Yazı</option>
+              <option value="2">Şiir</option>
+              <option value="3">Makale</option>
+              <option value="4">Astroloji</option>
+              <option value="5">Şifa ve Farkındalık Yazıları</option>
+              <option value="6">Karma Astroloji</option>
+              <option value="7">Astroloji ve Şifa Etiği</option>
+              <option value="8">Şifa Çalışmaları</option>
+              <option value="9">Haberler</option>
+              <option value="10">Articles in English</option>
+            </select>
+          </div>
+          <div className='d-flex flex-column text-gray-500'>
+            <h5  style={{color: 'black'}}>Yazar</h5>
+            <select
+              value={newPost.user_id}
+              onChange={(e) => setNewPost({ ...newPost, user_id: e.target.value })}
+            >
+              <option value="1">Sinem Kaya</option>
+            </select>
+          </div>
+        </div>
+              {/* ↓ Görsel Upload */}
+<div className="__add-grid-container">
+  <div className="__add-grid-left">
+    {uploadedUrl && <img src={uploadedUrl} alt="preview" width={200} />}
+  </div>
+  <div className="__add-grid-right">
+    <div style={{margin:'12px 0', color: 'black'}}>
+        <UploadImage
+          onUploaded={(url) => {
+            setUploadedUrl(url);                    // önizleme için
+            setNewPost(p => ({ ...p, img_url: url })); // otomatik alan doldurma
+          }}
+        />
+      </div>
+  </div>
+</div>
 
+      
+      <input
+        type="text"
+        value={uploadedUrl}
+        placeholder="Görsel URL"
+        readOnly
+        style={{ width: '100%', marginTop: 8 }}
+      />
+      
         <input
           type="text"
           placeholder="Başlık"
@@ -94,55 +151,7 @@ export default function AddPostForm({ onPostAdded }) {
           onEditorChange={(content) => setNewPost({ ...newPost, description: content })}
         />
 
-        {/* Ayrı Upload bölümü */}
-{/* ↓ Anasayfaya medya yükleme kutusu */}
-      <div style={{margin:'12px 0'}}>
-        <UploadImage
-          onUploaded={(url) => {
-            setUploadedUrl(url);                    // önizleme için
-            setNewPost(p => ({ ...p, img_url: url })); // otomatik alan doldurma
-          }}
-        />
-      </div>
-      <input
-        type="text"
-        value={uploadedUrl}
-        placeholder="Görsel URL"
-        readOnly
-        style={{ width: '100%', marginTop: 8 }}
-      />
-      {uploadedUrl && <img src={uploadedUrl} alt="preview" width={200} />}
-
-        {/* Kategori, yazar, tip vs. */}
-        <div style={{display: 'flex', justifyContent: 'space-between', padding: '20px'}}>
-          <div className='d-flex flex-column'>
-            <h5 className='text-black'>Kategori</h5>
-            <select
-              value={newPost.category_id}
-              onChange={(e) => setNewPost({ ...newPost, category_id: e.target.value })}
-            >
-              <option value="1">Yazı</option>
-              <option value="2">Şiir</option>
-              <option value="3">Makale</option>
-              <option value="4">Astroloji</option>
-              <option value="5">Şifa ve Farkındalık Yazıları</option>
-              <option value="6">Karma Astroloji</option>
-              <option value="7">Astroloji ve Şifa Etiği</option>
-              <option value="8">Şifa Çalışmaları</option>
-              <option value="9">Haberler</option>
-              <option value="10">Articles in English</option>
-            </select>
-          </div>
-          <div className='d-flex flex-column text-gray-500'>
-            <h5>Yazar</h5>
-            <select
-              value={newPost.user_id}
-              onChange={(e) => setNewPost({ ...newPost, user_id: e.target.value })}
-            >
-              <option value="1">Sinem Kaya</option>
-            </select>
-          </div>
-        </div>
+        
 
         <input
           type="text"
