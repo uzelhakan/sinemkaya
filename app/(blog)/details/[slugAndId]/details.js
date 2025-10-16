@@ -80,10 +80,17 @@ useEffect(() => {
                 <div className="blog-details__left">
                   <div className="blog-details__img-1">
                     {values ? (
-                      <img
-                          src={values.img_url?.trim() ? `/assets/uploads/${values.img_url}` : '/assets/uploads/nonphoto.png'}
-                        alt={values.title || "Blog Image"}
-                      />
+<img
+  src={
+    values.img_url?.trim()
+      ? values.img_url.startsWith('http')
+        ? values.img_url                              // Cloudinary veya harici tam URL
+        : `/assets/uploads/${values.img_url}`         // eski yerel yükleme
+      : '/assets/uploads/nonphoto.png'                // varsayılan görsel
+  }
+  alt={values.title || "Blog Image"}
+  style={{ objectFit: 'cover' }}
+/>
                     ) : (
                       <img
                         src="/assets/uploads/nonphoto.png"  // varsayılan bir resim koyabilirsin

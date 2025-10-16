@@ -65,10 +65,19 @@ useEffect(() => {
               >
                 <div className="blog-one__single">
                   <div className="blog-one__img">
-                    <img
-                      src={post?.img_url ? `/assets/uploads/${post.img_url}` : "/assets/uploads/nonphoto.png"}
-                      alt={post.title}
-                    />
+<img
+  src={
+    (() => {
+      const v = post?.img_url;
+      const s = typeof v === "string" ? v.trim() : "";
+      if (!s) return "/assets/uploads/nonphoto.png";
+      if (/^(https?:)?\/\//i.test(s) || s.startsWith("data:") || s.startsWith("blob:")) return s;
+      return `/assets/uploads/${s.replace(/^\/+/, "")}`;
+    })()
+  }
+  alt={post?.title || "Görsel"}
+  style={{ objectFit: "cover" }}
+/>
                     <div className="blog-one__hover">
                       <Link href={`/details/${slugify(post.title)}-${post.id}` || '#'}>
                         <span className="blog-one__hover-icon-1">

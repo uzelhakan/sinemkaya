@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Editor } from "@tinymce/tinymce-react";
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { database } from '@/lib/firebase';
-
+import UploadImage from '@/components/Panel/UploadImage';
 
 export default function AddPostForm({ onPostAdded }) {
   const [uploadedUrl, setUploadedUrl] = useState('');
@@ -22,20 +22,13 @@ export default function AddPostForm({ onPostAdded }) {
     description: ''
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
   const docRef = doc(database, 'sinemkaya', 'LQnIzobySlyS2BTHEPY9');
-
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
-
-
 
   const getNextPostId = (posts) => {
     if (!Array.isArray(posts)) return '1';
-    const maxId = posts.reduce((max, item) => {
-      const idNum = Number(item.id);
-      return !isNaN(idNum) && idNum > max ? idNum : max;
+    const maxId = posts.reduce((m, it) => {
+      const n = Number(it.id);
+      return !isNaN(n) && n > m ? n : m;
     }, 0);
     return String(maxId + 1);
   };
@@ -58,7 +51,7 @@ export default function AddPostForm({ onPostAdded }) {
 
     postItems.push(postWithId);
     await updateDoc(docRef, { post: postItems });
-    onPostAdded();
+    onPostAdded?.();
 
     setNewPost({
       title: '',
@@ -73,7 +66,6 @@ export default function AddPostForm({ onPostAdded }) {
       post_type: '1',
       description: ''
     });
-    setSelectedFile(null);
     setUploadedUrl('');
   };
 
@@ -81,12 +73,14 @@ export default function AddPostForm({ onPostAdded }) {
     <div className='__panel__add__container'>
       <div className='__panel__add__post' style={{ marginBottom: '2rem', width: '100%' }}>
         <h3>Yeni Yazı Ekle</h3>
+
         <input
           type="text"
           placeholder="Başlık"
           value={newPost.title}
           onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
         />
+
         <Editor
           apiKey="x8mmvv8hjne00754wquxh3qfcsth4n1pazj2jsvmyywhyml5"
           init={{
@@ -97,23 +91,27 @@ export default function AddPostForm({ onPostAdded }) {
               "undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code",
           }}
           value={newPost.description}
-          onEditorChange={(content) =>
-            setNewPost({ ...newPost, description: content })
-          }
+          onEditorChange={(content) => setNewPost({ ...newPost, description: content })}
         />
 
-        {/* Upload Alanı */}
-        <div style={{ padding: '20px' }}>
-          <h5 className="text-black">Görsel Yükle</h5>
-          <input type="file" onChange={handleFileChange} />
-          <button type="button" onClick={handleUpload}>Yükle</button>
-          {uploadedUrl && (
-            <div>
-              <p>Yüklendi:</p>
-              <img src={uploadedUrl} alt="preview" width="200" />
-            </div>
-          )}
-        </div>
+        {/* Ayrı Upload bölümü */}
+{/* ↓ Anasayfaya medya yükleme kutusu */}
+      <div style={{margin:'12px 0'}}>
+        <UploadImage
+          onUploaded={(url) => {
+            setUploadedUrl(url);                    // önizleme için
+            setNewPost(p => ({ ...p, img_url: url })); // otomatik alan doldurma
+          }}
+        />
+      </div>
+      <input
+        type="text"
+        value={uploadedUrl}
+        placeholder="Görsel URL"
+        readOnly
+        style={{ width: '100%', marginTop: 8 }}
+      />
+      {uploadedUrl && <img src={uploadedUrl} alt="preview" width={200} />}
 
         {/* Kategori, yazar, tip vs. */}
         <div style={{display: 'flex', justifyContent: 'space-between', padding: '20px'}}>

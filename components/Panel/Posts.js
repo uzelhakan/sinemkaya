@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { database } from '@/lib/firebase';
 import UpdatePost from './UpdatePost';
-import Link from "next/link";
 import AddPostForm from './AddPost';
 
 export default function Posts() {
@@ -25,7 +24,6 @@ export default function Posts() {
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -36,16 +34,20 @@ export default function Posts() {
     await updateDoc(docRef, { post: updatedPosts });
   };
 
-const handleEdit = (filteredIndex) => {
-  const postToEdit = filteredPosts[filteredIndex];
-  const realIndex = posts.findIndex((p) => p.id === postToEdit.id); // Gerçek index
-  setEditIndex(realIndex);
-  setEditData(postToEdit);
-  setTimeout(() => {
-    const el = document.getElementById("edit-form");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  }, 100);
-};
+  const filteredPosts = selectedCategory === 'all'
+    ? posts
+    : posts.filter((post) => post.category_id === selectedCategory);
+
+  const handleEdit = (filteredIndex) => {
+    const postToEdit = filteredPosts[filteredIndex];
+    const realIndex = posts.findIndex((p) => p.id === postToEdit.id);
+    setEditIndex(realIndex);
+    setEditData(postToEdit);
+    setTimeout(() => {
+      const el = document.getElementById("edit-form");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
 
   const handleUpdate = async () => {
     const updatedPosts = [...posts];
@@ -54,15 +56,6 @@ const handleEdit = (filteredIndex) => {
     setEditIndex(null);
     setEditData({});
   };
-
-  const filteredPosts = selectedCategory === 'all'
-    ? posts
-    : posts.filter((post) => post.category_id === selectedCategory);
-
-function fixImgUrl(url) {
-  if (typeof url !== 'string') return '/';
-  return url.startsWith('/') ? url : '/' + url;
-}
 
   return (
     <div className='__panel__container'>
@@ -73,19 +66,18 @@ function fixImgUrl(url) {
           <span className='add-post-icon'></span>
         </button>
       </div>
+
       <div className='show-post-form'>
         {showModal && (
-          <div className="modal-overlay" onClick={() => setShowModal(false)}
-          style={{position: 'relative', width: '100%'}}
-          >
-            <div className="modal-content" onClick={e => e.stopPropagation()}
-              >
+          <div className="modal-overlay" onClick={() => setShowModal(false)} style={{position: 'relative', width: '100%'}}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
               <button onClick={() => setShowModal(false)}>Kapat</button>
               <AddPostForm onPostAdded={() => console.log("Post eklendi!")} />
             </div>
           </div>
         )}
       </div>
+
       <div className='admin-filter-container'>
         <label>Filtrele: </label>
         <select className='admin-filter-list' value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
@@ -114,32 +106,46 @@ function fixImgUrl(url) {
                 <th>Cat</th>
                 <th>Başlık</th>
                 <th>Tarih</th>
-                <th hidden >Video URL</th>
+                <th hidden>Video URL</th>
                 <th>Resim</th>
                 <th hidden>User</th>
                 <th>Gösterim</th>
                 <th>Aktif</th>
-                <th hidden >Uzunluk</th>
-                <th hidden >Post Tipi</th>
+                <th hidden>Uzunluk</th>
+                <th hidden>Post Tipi</th>
                 <th className='__panel_post_btn'>İşlem</th>
               </tr>
             </thead>
             <tbody>
               {filteredPosts.map((post, index) => (
-                <tr key={index}>
+                <tr key={post.id ?? index}>
                   <td>{post.id}</td>
                   <td>{post.category_id}</td>
                   <td>{post.title}</td>
                   <td>{post.createdAt?.slice(0, 10)}</td>
                   <td hidden>{post.video_url || '-'}</td>
                   <td>
-                    <img src={`/assets/uploads${fixImgUrl(post.img_url)}`} alt="img" width="40" />
+                    {/* ↓ Firebase URL’yi direkt kullan. assets/uploads ÖNEKİNİ SİL */}
+<img
+  src={
+    (() => {
+      const v = post?.img_url;
+      const s = typeof v === "string" ? v.trim() : "";
+      if (!s) return "/assets/uploads/nonphoto.png"; // varsayılan
+      if (/^(https?:)?\/\//i.test(s)) return s;      // Cloudinary veya tam URL
+      return `/assets/uploads/${s.replace(/^\/+/, "")}`; // eski yüklemeler
+    })()
+  }
+  alt={post?.title || "img"}
+  width="40"
+/>
+
                   </td>
                   <td hidden>{post.user_id}</td>
                   <td>{post.display_count}</td>
                   <td>{post.isActive === '1' ? '✅' : '❌'}</td>
-                  <td hidden >{post.length}</td>
-                  <td hidden >{post.post_type}</td>
+                  <td hidden>{post.length}</td>
+                  <td hidden>{post.post_type}</td>
                   <td className='__panel_post_btn'>
                     <button onClick={() => handleEdit(index)}>Düzenle</button>
                     <button onClick={() => handleDelete(index)}>Sil</button>

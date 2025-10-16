@@ -162,8 +162,15 @@ const handleCategoryClick = (categoryId) => {
                 <div className="blog-one__single">
                   <div className="blog-one__img">
                     <img
-                      src={blog?.img_url ? `/assets/uploads/${blog.img_url}` : '/assets/uploads/nonphoto.png'}
+                      src={
+                        blog?.img_url
+                          ? blog.img_url.startsWith('http')
+                            ? blog.img_url                              // Cloudinary ya da tam URL
+                            : `/assets/uploads/${blog.img_url}`         // eski yüklemeler
+                          : '/assets/uploads/nonphoto.png'              // varsayılan resim
+                      }
                       alt={blog?.title || ""}
+                      style={{ objectFit: 'cover' }}
                     />
                     <div className="blog-one__hover">
                       <Link href={`/details/${slugify(blog?.title || "no-title")}-${blog?.id || ""}` || '#'}>

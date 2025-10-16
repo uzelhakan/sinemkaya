@@ -81,10 +81,17 @@ const handlePrevPage = () => {
               >
                 <div className="blog-one__single">
                   <div className="blog-one__img">
-                    <img
-                      src={blog?.img_url ? `/assets/uploads/${blog.img_url}` : '/assets/uploads/nonphoto.png'}
-                      alt={blog?.title || ""}
-                    />
+<img
+  src={
+    blog?.img_url
+      ? blog.img_url.startsWith('http')
+        ? blog.img_url               // Cloudinary veya harici link
+        : `/assets/uploads/${blog.img_url}` // eski yerel resimler
+      : '/assets/uploads/nonphoto.png'
+  }
+  alt={blog?.title || ""}
+  style={{ objectFit: 'cover' }}
+/>
                     <div className="blog-one__hover">
                       <Link href={`/details/${slugify(blog?.title || "")}-${blog?.id || ""}` || '#'}>
                         <span className="blog-one__hover-icon-1">
